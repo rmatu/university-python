@@ -41,6 +41,7 @@ def exercise2():
 
 exercise2()
 
+
 # Zadanie 3
 # Zmodyfikuj kod związany z losowaniem liczb z przedziału od 1 do 10, tak aby obliczał przybliżoną wartość oczekiwaną
 # obliczoną jako średnią (z prób). Uśrednienie ma nastąpić 1m razy (milion razy).
@@ -104,6 +105,7 @@ def exercise5(n):
 
 # Najszybszy program (znaleziony w internecie)
 # link - https://stackoverflow.com/questions/42552897/fibonacci-sequence-calculator-python
+
 def internet_fib(n):
     a = b = 1
     yield a
@@ -116,6 +118,7 @@ def internet_fib(n):
 
 # Zadanie 6
 # Napisz program, który wyznacza odległość Levenshteina dla dwóch zadanych łańcuchów znaków.
+
 
 def exercise6(s, t):
     if s == "":
