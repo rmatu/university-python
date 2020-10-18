@@ -15,7 +15,7 @@ def exercise1():
     print(t2 - t1)
 
 
-exercise1()
+#exercise1()
 
 
 # Zadanie 2
@@ -23,20 +23,17 @@ exercise1()
 # Do zadania wystarczy utworzyć słownik z przesunięciami czasowymi z i od UTC.
 
 def exercise2():
-    d = ""
-    for i in range(-12, 14):
-        d = {"UTC" + str(i): i}
+    d = {"UTC"+str(i): i for i in range(-12, 15)}
 
+    print(d)
     choice = input('Wprowadź liczbę z zakresu [-12, 14], aby obliczyć strefę czasową: ')
     key = "UTC" + choice
 
-    user_time = 0
     if key in d:
         user_time = d[key]
-
-    actual_time = datetime.now()
-    new_time = actual_time + timedelta(hours=user_time)
-    print(new_time)
+        actual_time = datetime.now()
+        new_time = actual_time + timedelta(hours=user_time)
+        print(new_time)
 
 
 exercise2()
@@ -68,7 +65,7 @@ def exercise3():
     print (f"Avg time: {avg}")
 
 
-exercise3()
+#exercise3()
 
 
 # Zadanie 4
@@ -89,7 +86,8 @@ def exercise4():
     print(prime_numbers)
 
 
-exercise4()
+#exercise4()
+
 # Zadanie 5
 # Napisz program wyznaczający ciąg Fibonacciego dla 93 elementu (lub 93 iteracji) w najszybszym możliwym czasie.
 
@@ -137,4 +135,4 @@ def exercise6(s, t):
     return res
 
 
-print(exercise6('test', 'AtestAB'))
+#print(exercise6('test', 'AtestAB'))
