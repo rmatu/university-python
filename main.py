@@ -15,7 +15,7 @@ def exercise1():
     print(t2 - t1)
 
 
-#exercise1()
+exercise1()
 
 
 # Zadanie 2
@@ -65,7 +65,7 @@ def exercise3():
     print (f"Avg time: {avg}")
 
 
-#exercise3()
+exercise3()
 
 
 # Zadanie 4
@@ -86,7 +86,7 @@ def exercise4():
     print(prime_numbers)
 
 
-#exercise4()
+exercise4()
 
 # Zadanie 5
 # Napisz program wyznaczający ciąg Fibonacciego dla 93 elementu (lub 93 iteracji) w najszybszym możliwym czasie.
@@ -135,4 +135,4 @@ def exercise6(s, t):
     return res
 
 
-#print(exercise6('test', 'AtestAB'))
+print(exercise6('test', 'AtestAB'))
