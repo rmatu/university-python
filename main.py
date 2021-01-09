@@ -1,138 +1,85 @@
-import time
-from datetime import datetime, timedelta
-from random import Random
-rand = Random()
+import hashlib, binascii
+import shelve
+import numpy as np
 
-# Zadanie 1
-# Prześledź szybkość dodawania elementów do tablicy.
-
-def exercise1():
-    tab = []
-    t1 = time.time()
-    for i in range(100000):
-        tab.append(i)
-    t2 = time.time()
-    print(t2 - t1)
+def hash_password(password):
+    """Hash a password for storing."""
+    # Ponieważ nie możemy dodać osobnego pliku do jupyter notebooka z którego zczytywalibyśmy
+    # ziarno, dodajemy je od razu tutaj
+    salt = b'bd63843e66ddd780bfe991f9583c9202f71036698aee15762df7d9ef999aebca25ba67716dc53cc78355c66e5'
+    pwdhash = hashlib.pbkdf2_hmac('sha512', password.encode('utf-8'),
+                                salt, 100000)
+    pwdhash = binascii.hexlify(pwdhash)
+    return (salt + pwdhash).decode('ascii')
 
 
-exercise1()
+mockUsers = [
+    {'login': "Ryszard", 'password': 'bd63843e66ddd780bfe991f9583c9202f71036698aee15762df7d9ef999aebca25ba67716dc53cc78355c66e5513db32cb66aa13c3122a9acba84c3d11c8954d41dc7ba2641d02582ac5aeb0d3faafa54b5daadb669faf1560fdfe305399cadbeba0b71c8598981fce4c691c3'},
+    {'login': "Damian", 'password': 'bd63843e66ddd780bfe991f9583c9202f71036698aee15762df7d9ef999aebca25ba67716dc53cc78355c66e59aee6e65f33487327fbebf82d81e0159e1ffa7ffd5ad88c66d1c93668b1ac10f689e9496e694d5a17ce403226666132a6a7a65444b3a49b9d294bc23005e09d3'},
+    {'login': "Przemek", 'password': 'bd63843e66ddd780bfe991f9583c9202f71036698aee15762df7d9ef999aebca25ba67716dc53cc78355c66e5eae31aefc17ea9b06c06564a7a64c2f30bb9432dfdb93e7322fa6020987c2782a5374e6a32c93a889b2ba4c1d25edeedf3ac2bc05e4997d8a96c3e0158bfc24e'},
+    {'login': "Monika", 'password': 'bd63843e66ddd780bfe991f9583c9202f71036698aee15762df7d9ef999aebca25ba67716dc53cc78355c66e51d4971600ecb21c4dd05b30e3348bf38e3809cc44400cc8ff90be2dce672ccc16a41bd994fcd20bf1d9a401823c15af6c4e6acff0c75b0871b40c478e4d280e9'}
+
+]
+
+def saveUsers(users):
+    with shelve.open('user.db') as shelf:
+        for id, user in enumerate(users):
+            shelf[str(id)] = user
 
 
-# Zadanie 2
-# Stwórz kalkulator do obliczenia aktualnej godziny w konkretnej strefie czasowej.
-# Do zadania wystarczy utworzyć słownik z przesunięciami czasowymi z i od UTC.
-
-def exercise2():
-    d = {"UTC"+str(i): i for i in range(-12, 15)}
-
-    print(d)
-    choice = input('Wprowadź liczbę z zakresu [-12, 14], aby obliczyć strefę czasową: ')
-    key = "UTC" + choice
-
-    if key in d:
-        user_time = d[key]
-        actual_time = datetime.now()
-        new_time = actual_time + timedelta(hours=user_time)
-        print(new_time)
+saveUsers(mockUsers)
 
 
-exercise2()
+def zadanie1(func):
+    def wrapper(login, password):
+        with shelve.open('user.db') as shelf:
+            for item in shelf.items():
+                if item[1]['login'] == login:
+                    if hash_password(password) == item[1]['password']:
+                        func(login, password)
+                    else:
+                        print('Błąd')
+
+    return wrapper
 
 
-# Zadanie 3
-# Zmodyfikuj kod związany z losowaniem liczb z przedziału od 1 do 10, tak aby obliczał przybliżoną wartość oczekiwaną
-# obliczoną jako średnią (z prób). Uśrednienie ma nastąpić 1m razy (milion razy).
+@zadanie1
+def log_in(login, password):
+    print(f'Użytkownik {login} zalogowany pomyślnie')
 
-def exercise3():
-    tab = []
-    try_count = 1
-    while True:
-        t1 = time.time()
-        if rand.randint(0, 10) >= 10:  # random [0,10]
-            t2 = time.time()
-            tab.append(t2-t1)
-            break
+
+log_in('Przemek', 'herbata')
+
+
+def zadanie2(func):
+    def wrapper(value, min_v, max_v):
+        if min_v <= value <= max_v:
+            func(value, min_v, max_v)
         else:
-            try_count += 1
-            continue
-
-    sum1 = 0
-    for i in range(len(tab)):
-        sum1 += tab[i]
-    avg = sum1 / len(tab)
-
-    print(f"Found in {try_count} tries")
-    print (f"Avg time: {avg}")
+            print('error')
+    return wrapper
 
 
-exercise3()
+@zadanie2
+def check(value, min_v, max_v):
+    print(f'{value} mieści się w przedziale [{min_v}, {max_v}]')
 
 
-# Zadanie 4
-# Napisz algorytm obliczający kolejne liczby pierwsze dla zadanych wartości.
-
-def exercise4():
-    prime_numbers = {1}
-    user_down = int(input("Podaj zakres dolny: "))
-    user_up = int(input("Podaj zakres górny: "))
-
-    for i in range(user_down, user_up + 1):
-        for j in range(2, i):
-            if (i % j) == 0:
-                break
-            else:
-                prime_numbers.add(i)
-
-    print(prime_numbers)
+check(10, 1, 11)
 
 
-exercise4()
-
-# Zadanie 5
-# Napisz program wyznaczający ciąg Fibonacciego dla 93 elementu (lub 93 iteracji) w najszybszym możliwym czasie.
-
-def exercise5(n):
-    if n == 1:
-        return [1]
-    elif n == 2:
-        return [1, 1]
-    else:
-        sub = exercise5(n - 1)
-        return sub + [sub[-1] + sub[-2]]
+def fun_gen(p, min_v, max_v):
+    for i in range(len(p)):
+        if min_v <= p[i] <= max_v:
+            yield i
 
 
-# Najszybszy program (znaleziony w internecie)
-# link - https://stackoverflow.com/questions/42552897/fibonacci-sequence-calculator-python
-
-def internet_fib(n):
-    a = b = 1
-    yield a
-    yield b
-    while n > 2:
-        n -= 1
-        a, b = b, a + b
-        yield b
+def zadanie3(poly, min_v, max_v):
+    r = np.roots(poly)
+    p = r[np.isreal(r)]
+    for i in fun_gen(p, min_v, max_v):
+        print(round(p[i], 5), 'odp')
 
 
-# Zadanie 6
-# Napisz program, który wyznacza odległość Levenshteina dla dwóch zadanych łańcuchów znaków.
+zadanie3([1, 6, 5, -12], -10, 0)  #x^3 + 6x^2 + 5x - 12
 
-
-def exercise6(s, t):
-    if s == "":
-        return len(t)
-    if t == "":
-        return len(s)
-    if s[-1] == t[-1]:
-        cost = 0
-    else:
-        cost = 1
-
-    res = min([exercise6(s[:-1], t) + 1,
-               exercise6(s, t[:-1]) + 1,
-               exercise6(s[:-1], t[:-1]) + cost])
-
-    return res
-
-
-print(exercise6('test', 'AtestAB'))
